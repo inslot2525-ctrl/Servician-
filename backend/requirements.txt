@@ -4,6 +4,7 @@ python-multipart
 python-dotenv
 requests
 pydantic
+google-generativeai
 langchain
 langchain-community
 faiss-cpu
