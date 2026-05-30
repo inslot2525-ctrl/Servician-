@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_BASE = "http://127.0.0.1:8001";
+const API_BASE = "https://servician-production.up.railway.app";
 
 export default function App() {
   const [screen, setScreen] = useState("login");
