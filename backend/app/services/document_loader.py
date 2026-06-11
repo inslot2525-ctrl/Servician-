@@ -46,8 +46,12 @@ def load_docx(file_path: str):
 
 
 def load_txt(file_path: str):
-    with open(file_path, "r", encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except UnicodeDecodeError:
+        with open(file_path, "r", encoding="utf-16", errors="ignore") as f:
+            text = f.read()
 
     return [
         Document(

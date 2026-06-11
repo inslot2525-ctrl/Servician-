@@ -1,18 +1,18 @@
-import google.generativeai as genai
-
+from google import genai
 from app.config import settings
-
 
 def generate_response(prompt: str) -> str:
     if not settings.GOOGLE_API_KEY:
         return "Missing GOOGLE_API_KEY. Set it in .env."
 
     try:
-        genai.configure(api_key=settings.GOOGLE_API_KEY)
-        model = genai.GenerativeModel(settings.GOOGLE_MODEL)
-        result = model.generate_content(prompt)
-        if getattr(result, "text", None):
-            return result.text
+        client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+        response = client.models.generate_content(
+            model=settings.GOOGLE_MODEL,
+            contents=prompt
+        )
+        if getattr(response, "text", None):
+            return response.text
         return "No response generated."
     except Exception as e:
         return f"Google API error: {str(e)}"

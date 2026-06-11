@@ -4,10 +4,12 @@ python-multipart
 python-dotenv
 requests
 pydantic
-google-generativeai
+google-genai
 langchain
 langchain-community
+langchain-huggingface
 faiss-cpu
 sentence-transformers
 PyMuPDF
 python-docx
+SQLAlchemy

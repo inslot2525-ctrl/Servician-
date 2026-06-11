@@ -19,7 +19,7 @@ def query_document(q: str = Query(...)):
         }
 
     retriever = db.as_retriever(search_kwargs={"k": 6})
-    docs = retriever.get_relevant_documents(q)
+    docs = retriever.invoke(q)
 
     response = answer_query(q, docs)
 

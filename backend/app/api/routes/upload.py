@@ -8,7 +8,7 @@ from app.config import settings
 from app.services.document_loader import load_document
 from app.services.chunking import split_documents
 from app.core.embeddings import get_embeddings
-from app.core.vectorstore import save_vectorstore
+from app.core.vectorstore import save_vectorstore, load_vectorstore
 
 router = APIRouter()
 
@@ -26,7 +26,13 @@ async def upload_document(file: UploadFile = File(...)):
     chunks = split_documents(docs)
 
     embeddings = get_embeddings()
-    db = FAISS.from_documents(chunks, embeddings)
+    existing_db = load_vectorstore(settings.VECTOR_DB_PATH, embeddings)
+    
+    if existing_db:
+        existing_db.add_documents(chunks)
+        db = existing_db
+    else:
+        db = FAISS.from_documents(chunks, embeddings)
 
     save_vectorstore(db, settings.VECTOR_DB_PATH)
 

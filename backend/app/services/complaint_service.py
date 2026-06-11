@@ -1,10 +1,10 @@
 from datetime import datetime
 from app.core.llm import generate_response
 
-COMPLAINTS = []
+from sqlalchemy.orm import Session
+from app.db.models import Complaint
 
-
-def classify_complaint(name: str, email: str, company: str, category: str, description: str):
+def classify_complaint(db: Session, name: str, email: str, company: str, category: str, description: str):
     prompt = f"""
 You are an AI complaint escalation agent for Careflow.
 
@@ -25,21 +25,21 @@ Complaint Description: {description}
 
     ai_analysis = generate_response(prompt)
 
-    ticket = {
-        "ticket_id": f"CF-{int(datetime.now().timestamp())}",
-        "name": name,
-        "email": email,
-        "company": company,
-        "category": category,
-        "description": description,
-        "ai_analysis": ai_analysis,
-        "status": "Escalated",
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    }
+    db_complaint = Complaint(
+        ticket_id=f"CF-{int(datetime.now().timestamp())}",
+        name=name,
+        email=email,
+        company=company,
+        category=category,
+        description=description,
+        ai_analysis=ai_analysis,
+        status="Escalated",
+    )
+    db.add(db_complaint)
+    db.commit()
+    db.refresh(db_complaint)
+    return db_complaint
 
-    COMPLAINTS.append(ticket)
-    return ticket
 
-
-def get_all_complaints():
-    return COMPLAINTS
+def get_all_complaints(db: Session):
+    return db.query(Complaint).order_by(Complaint.created_at.desc()).all()
